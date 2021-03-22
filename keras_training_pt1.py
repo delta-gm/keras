@@ -84,3 +84,34 @@ VGG_score=model.evaluate_generator(test_generator_vgg,verbose=1)
 model.summary()
 
 print('Accuracy: {}% \n Loss: {}'.format(100*VGG_score[1], VGG_score[0]))        
+
+resnet_prediction=rn_model.predict(
+                                    test_generator_rn,
+                                    batch_size=5,
+                                    verbose = 1,
+                                    )
+
+
+for i in range(0,5):
+  if resnet_prediction[i][0]>resnet_prediction[i][1]:
+    print("Result "+str(i+1)+": "+"Negative")
+  else:
+    print("Result "+str(i+1)+": "+"Positive")
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+predicted_samples=test_generator_rn.next()
+predicted_images=predicted_samples[0]
+
+fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(20, 10)) # define your figure and axes
+
+ind = 0
+for ax1 in axs:
+    for ax2 in ax1: 
+        image_data = predicted_images[ind].astype(np.uint8)	# delete .astype(np.uint8) if no imshow error
+        ax2.imshow(image_data)
+        ind += 1
+
+fig.suptitle('First Six Concrete Images') 
+plt.show()
