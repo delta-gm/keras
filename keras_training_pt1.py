@@ -47,3 +47,40 @@ fit_history=model.fit(
 )
 
 model.save('classifier_vgg16_model.h5')
+
+
+
+from keras.applications import ResNet50
+from keras.applications.resnet50 import preprocess_input as rn_pp_input
+from keras.models import load_model
+rn_model = load_model('classifier_resnet_model.h5')
+
+rn_generator=ImageDataGenerator(
+    preprocessing_function=rn_pp_input,
+)
+
+test_generator_rn=rn_generator.flow_from_directory(
+    'concrete_data_week4/test',
+    target_size=(image_resize,image_resize),
+    shuffle=False
+)
+
+test_generator_vgg=data_generator.flow_from_directory(
+    'concrete_data_week4/test',
+    target_size=(image_resize,image_resize),
+    shuffle=False
+)
+
+
+
+rn_score=rn_model.evaluate_generator(test_generator_rn,verbose=1)
+
+print('Accuracy: {}% \n Loss: {}'.format(100*rn_score[1], rn_score[0]))
+
+model = load_model('classifier_vgg16_model.h5')
+
+VGG_score=model.evaluate_generator(test_generator_vgg,verbose=1)
+
+model.summary()
+
+print('Accuracy: {}% \n Loss: {}'.format(100*VGG_score[1], VGG_score[0]))        
